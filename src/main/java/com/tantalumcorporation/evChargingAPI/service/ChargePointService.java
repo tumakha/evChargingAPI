@@ -1,6 +1,7 @@
 package com.tantalumcorporation.evChargingAPI.service;
 
 import com.tantalumcorporation.evChargingAPI.domain.ChargePoint;
+import com.tantalumcorporation.evChargingAPI.domain.Provider;
 import java.util.List;
 
 /**
@@ -15,5 +16,7 @@ public interface ChargePointService {
   ChargePoint updatePoint(ChargePoint point);
 
   ChargePoint findPoint(Long pointId);
+
+  ChargePoint findByProviderAndDeviceId(Provider provider, String deviceId);
 
 }

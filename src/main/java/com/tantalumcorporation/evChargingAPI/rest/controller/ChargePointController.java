@@ -11,14 +11,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import com.tantalumcorporation.evChargingAPI.domain.ChargePoint;
+import com.tantalumcorporation.evChargingAPI.importer.DataImporter;
 import com.tantalumcorporation.evChargingAPI.importer.ImporterRepository;
 import com.tantalumcorporation.evChargingAPI.rest.model.ChargePointChanges;
+import com.tantalumcorporation.evChargingAPI.rest.model.ImportParams;
 import com.tantalumcorporation.evChargingAPI.rest.model.StatusResponse;
 import com.tantalumcorporation.evChargingAPI.service.ChargePointService;
+import com.tantalumcorporation.evChargingAPI.util.PropertyUtil;
 import java.util.List;
+import java.util.Optional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +30,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.tantalumcorporation.evChargingAPI.rest.model.ImportParams;
 
 /**
  * @author Yuriy Tumakha
@@ -67,7 +68,7 @@ public class ChargePointController {
     if (point == null) {
       return new ResponseEntity<>(NOT_FOUND);
     } else {
-      BeanUtils.copyProperties(chargePointChanges, point);
+      PropertyUtil.copyNonNullProperties(chargePointChanges, point);
       ChargePoint updatedPoint = chargePointService.updatePoint(point);
       return new ResponseEntity<>(updatedPoint, OK);
     }
@@ -76,13 +77,12 @@ public class ChargePointController {
   @RequestMapping(value = "/import", method = POST)
   public ResponseEntity<StatusResponse> importPoints(@RequestBody ImportParams importParams) {
       try {
-        return importerRepository.getDataImporter(importParams.getProvider())
-            .map(importer -> {
-              importer.importFile(importParams.getFile());
-              return getStatusResponse("Ok", OK);
-            })
-            .orElse(getStatusResponse("Unknown Provider", BAD_REQUEST));
-
+        Optional<DataImporter> importer = importerRepository.getDataImporter(importParams.getProvider());
+        if (!importer.isPresent()) {
+          return getStatusResponse("Unknown Provider", BAD_REQUEST);
+        }
+        importer.get().importFile(importParams.getFile());
+        return getStatusResponse("Ok", OK);
       } catch (Exception e) {
         LOG.error("Import failed", e);
         return getStatusResponse("Import failed", INTERNAL_SERVER_ERROR);

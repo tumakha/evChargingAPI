@@ -41,7 +41,7 @@ public class ChargePointServiceImplTest {
   private ChargePoint generatePoint(Integer num) {
     ChargePoint chargePoint = new ChargePoint();
     chargePoint.setProvider(NATIONAL_REGISTRY);
-    chargePoint.setDeviceId(NATIONAL_REGISTRY.name() + num);
+    chargePoint.setDeviceId(NATIONAL_REGISTRY.name() + "." + num);
     chargePoint.setName("Point" + num);
     chargePoint.setLatitude(LATITUDE);
     chargePoint.setLongitude((double) num / 100);
@@ -62,6 +62,16 @@ public class ChargePointServiceImplTest {
   }
 
   @Test
+  public void testFindByProviderAndDeviceId() {
+    String deviceId = NATIONAL_REGISTRY.name() + "." + POINT_ID;
+    ChargePoint point = chargePointService.findByProviderAndDeviceId(NATIONAL_REGISTRY, deviceId);
+
+    assertEquals("Wrong Id", POINT_ID, point.getId());
+    assertEquals("Wrong Provider", NATIONAL_REGISTRY, point.getProvider());
+    assertEquals("Wrong Device Id", deviceId, point.getDeviceId());
+  }
+
+    @Test
   public void testUpdatePoint() {
     ChargePoint dbChargePoint = chargePointService.findPoint(POINT_ID);
     Double latitude = dbChargePoint.getLatitude();

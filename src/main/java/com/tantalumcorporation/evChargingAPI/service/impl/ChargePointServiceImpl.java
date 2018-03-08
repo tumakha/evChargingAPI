@@ -1,10 +1,12 @@
 package com.tantalumcorporation.evChargingAPI.service.impl;
 
 import com.tantalumcorporation.evChargingAPI.domain.ChargePoint;
+import com.tantalumcorporation.evChargingAPI.domain.Provider;
 import com.tantalumcorporation.evChargingAPI.repository.ChargePointRepository;
 import com.tantalumcorporation.evChargingAPI.service.ChargePointService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,14 @@ public class ChargePointServiceImpl implements ChargePointService {
   @Override
   public ChargePoint findPoint(Long pointId) {
     return chargePointRepository.findOne(pointId);
+  }
+
+  @Override
+  public ChargePoint findByProviderAndDeviceId(Provider provider, String deviceId) {
+    ChargePoint point = new ChargePoint();
+    point.setProvider(provider);
+    point.setDeviceId(deviceId);
+    return chargePointRepository.findOne(Example.of(point));
   }
 
 }

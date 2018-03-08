@@ -1,5 +1,6 @@
 package com.tantalumcorporation.evChargingAPI.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -22,10 +23,12 @@ public class ChargePoint {
   @GeneratedValue
   private Long id;
 
+  @JsonIgnore
   @Enumerated(EnumType.STRING)
   @Column(length = 32, nullable = false)
   private Provider provider;
 
+  @JsonIgnore
   @Column(nullable = false)
   private String deviceId;
 

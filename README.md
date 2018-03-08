@@ -25,12 +25,14 @@ REST API examples
  * Extract the nearest charge points
 
     
-    curl -v http://localhost:8888/charge_points?latitude=51.533875&longitude=-0.486539&results=10
+    http://localhost:8888/charge_points?latitude=51.533875&longitude=-0.486539&results=10
+    
+    curl -v http://localhost:8888/charge_points?latitude=51.533875\&longitude=-0.486539\&results=10
     
  * Import charge points from CSV file
 
         
-    curl -v -X POST --header "Content-Type: application/json" -d "{\"provider\": \"NATIONAL_REGISTRY\", \"file\": \"http://chargepoints.dft.gov.uk/api/retrieve/registry/format/csv\"}" http://localhost:8888/charge_points/import
+    curl -v POST --header "Content-Type: application/json" -d "{\"provider\": \"NATIONAL_REGISTRY\", \"file\": \"http://chargepoints.dft.gov.uk/api/retrieve/registry/format/csv\"}" http://localhost:8888/charge_points/import
     
  * Update only the specified properties of charge point. (123 - Point id)
 
