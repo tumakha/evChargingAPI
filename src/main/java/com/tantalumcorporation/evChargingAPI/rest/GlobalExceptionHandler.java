@@ -4,7 +4,6 @@ import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Map;
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
