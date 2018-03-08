@@ -20,11 +20,14 @@ import com.tantalumcorporation.evChargingAPI.service.ChargePointService;
 import com.tantalumcorporation.evChargingAPI.util.PropertyUtil;
 import java.util.List;
 import java.util.Optional;
+import javax.validation.Valid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/charge_points", produces = {APPLICATION_JSON_VALUE})
+@Validated
 public class ChargePointController {
 
   private static final Log LOG = LogFactory.getLog(ChargePointController.class);
@@ -48,9 +52,9 @@ public class ChargePointController {
 
   @RequestMapping(method = GET)
   public List<ChargePoint> findPoints(
-      @RequestParam("latitude") Double latitude,
-      @RequestParam("longitude") Double longitude,
-      @RequestParam("results") Integer results) {
+      @Range(min = -90, max = 90) @RequestParam("latitude") Double latitude,
+      @Range(min = -180, max = 180) @RequestParam("longitude") Double longitude,
+      @Range(min = 1, max = 1000) @RequestParam("results") Integer results) {
     return chargePointService.findNearestPoints(latitude, longitude, results);
   }
 
@@ -63,7 +67,7 @@ public class ChargePointController {
 
   @RequestMapping(value = "/{pointId}", method = PATCH)
   public ResponseEntity<ChargePoint> updatePoint(@PathVariable("pointId") Long pointId,
-      @RequestBody ChargePointChanges chargePointChanges) {
+      @Valid @RequestBody ChargePointChanges chargePointChanges) {
     ChargePoint point = chargePointService.findPoint(pointId);
     if (point == null) {
       return new ResponseEntity<>(NOT_FOUND);
