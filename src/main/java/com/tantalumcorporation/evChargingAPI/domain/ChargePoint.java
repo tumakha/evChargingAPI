@@ -12,8 +12,8 @@ import javax.persistence.UniqueConstraint;
 /**
  * @author Yuriy Tumakha
  */
-@Entity(name = "charge_point")
-@Table(uniqueConstraints = {
+@Entity
+@Table(name = "charge_point", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"provider", "deviceId"})
 })
 public class ChargePoint {
